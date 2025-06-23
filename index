@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>タイムタイマー（経過時間表示）</title>
+  <style>
+    body { text-align: center; font-family: sans-serif; margin: 20px; }
+    canvas { background: #eee; border-radius: 50%; margin-top: 20px; }
+    button, select { font-size: 1.2em; margin: 10px; }
+  </style>
+</head>
+<body>
+  <h1>経過時間タイマー</h1>
+
+  <label>時間設定：
+    <select id="timeSelect"></select>
+  </label><br>
+
+  <input type="file" id="imageInput" accept="image/*">
+  <button onclick="resetImage()">画像リセット</button>
+  <br>
+
+  <button onclick="startTimer()">▶開始</button>
+  <button onclick="pauseTimer()">⏸一時停止</button>
+  <button onclick="resetTimer()">🔄リセット</button>
+
+  <br><canvas id="timerCanvas" width="400" height="400"></canvas>
+
+  <audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
