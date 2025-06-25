@@ -10,11 +10,11 @@ let timer;
 let running = false;
 let centerImage = null;
 
-// レスポンシブ対応
+// レスポンシブ：正方形Canvasに
 function resizeCanvas() {
   const size = Math.min(window.innerWidth * 0.9, 400);
   canvas.width = size;
-  canvas.height = size * 0.75;
+  canvas.height = size;  // ← 縦も正方形にして円を完全表示
   drawTimer();
 }
 window.addEventListener("resize", resizeCanvas);
@@ -57,7 +57,7 @@ function drawTimer() {
 
   ctx.clearRect(0, 0, width, height);
 
-  // 経過部分
+  // 経過部分の円弧（背景塗り）
   ctx.beginPath();
   ctx.moveTo(cx, cy);
   ctx.arc(cx, cy, radius, -Math.PI / 2, angle - Math.PI / 2);
@@ -72,7 +72,7 @@ function drawTimer() {
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // 画像
+  // 画像表示（中央）
   if (centerImage) {
     const size = radius * 1.2;
     const aspect = centerImage.width / centerImage.height;
@@ -88,7 +88,7 @@ function drawTimer() {
     ctx.restore();
   }
 
-  // 数値（残り時間）
+  // 残り時間表示（中央に）
   ctx.fillStyle = "#222";
   ctx.font = `${Math.floor(width * 0.08)}px sans-serif`;
   ctx.textAlign = "center";
