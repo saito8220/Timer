@@ -10,7 +10,7 @@ let timer;
 let running = false;
 let centerImage = null;
 
-// 1〜60分の選択肢を動的に生成
+// 1〜60分の選択肢を生成
 for (let i = 1; i <= 60; i++) {
   const option = document.createElement("option");
   option.value = i;
@@ -45,18 +45,18 @@ function drawTimer() {
   const fillColor = (remaining <= 180) ? "#f66" : "#8fd1c8";
 
   ctx.beginPath();
-  ctx.moveTo(200, 200);
-  ctx.arc(200, 200, 180, -Math.PI / 2, angle - Math.PI / 2);
+  ctx.moveTo(200, 150);
+  ctx.arc(200, 150, 100, -Math.PI / 2, angle - Math.PI / 2);
   ctx.closePath();
   ctx.fillStyle = fillColor;
   ctx.fill();
 
   ctx.beginPath();
-  ctx.arc(200, 200, 180, 0, 2 * Math.PI);
+  ctx.arc(200, 150, 100, 0, 2 * Math.PI);
   ctx.stroke();
 
   if (centerImage) {
-    const size = 160;
+    const size = 100;
     const aspect = centerImage.width / centerImage.height;
     let drawWidth = size, drawHeight = size;
 
@@ -68,11 +68,21 @@ function drawTimer() {
 
     ctx.save();
     ctx.beginPath();
-    ctx.arc(200, 200, size / 2, 0, 2 * Math.PI);
+    ctx.arc(200, 150, size / 2, 0, 2 * Math.PI);
     ctx.clip();
-    ctx.drawImage(centerImage, 200 - drawWidth / 2, 200 - drawHeight / 2, drawWidth, drawHeight);
+    ctx.drawImage(centerImage, 200 - drawWidth / 2, 150 - drawHeight / 2, drawWidth, drawHeight);
     ctx.restore();
   }
+}
+
+function playAlarmRepeated(times = 3, interval = 1000) {
+  let count = 0;
+  const soundTimer = setInterval(() => {
+    alarm.currentTime = 0;
+    alarm.play();
+    count++;
+    if (count >= times) clearInterval(soundTimer);
+  }, interval);
 }
 
 function startTimer() {
@@ -91,7 +101,7 @@ function startTimer() {
     } else {
       clearInterval(timer);
       running = false;
-      alarm.play();
+      playAlarmRepeated(3);
     }
   }, 1000);
 }
