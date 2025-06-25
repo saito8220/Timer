@@ -10,15 +10,25 @@ let timer;
 let running = false;
 let centerImage = null;
 
-// 1〜60分の選択肢を生成
+// レスポンシブ対応
+function resizeCanvas() {
+  const size = Math.min(window.innerWidth * 0.9, 400);
+  canvas.width = size;
+  canvas.height = size * 0.75;
+  drawTimer();
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+// 時間選択肢（1〜60分）
 for (let i = 1; i <= 60; i++) {
   const option = document.createElement("option");
   option.value = i;
-  option.textContent = `${i}分`;
+  option.textContent = i;
   timeSelect.appendChild(option);
 }
 
-imageInput.addEventListener('change', (event) => {
+imageInput.addEventListener("change", (event) => {
   const file = event.target.files[0];
   if (!file) return;
   const img = new Image();
@@ -36,53 +46,67 @@ function resetImage() {
 }
 
 function drawTimer() {
+  const width = canvas.width;
+  const height = canvas.height;
+  const cx = width / 2;
+  const cy = height / 2;
+  const radius = Math.min(width, height) * 0.35;
+  const remaining = totalTime - elapsed;
   const percent = elapsed / totalTime;
   const angle = percent * 2 * Math.PI;
-  const remaining = totalTime - elapsed;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, width, height);
 
-  const fillColor = (remaining <= 180) ? "#f66" : "#8fd1c8";
-
+  // 経過部分
   ctx.beginPath();
-  ctx.moveTo(200, 150);
-  ctx.arc(200, 150, 100, -Math.PI / 2, angle - Math.PI / 2);
+  ctx.moveTo(cx, cy);
+  ctx.arc(cx, cy, radius, -Math.PI / 2, angle - Math.PI / 2);
   ctx.closePath();
-  ctx.fillStyle = fillColor;
+  ctx.fillStyle = remaining <= 180 ? "#f66" : "#8fd1c8";
   ctx.fill();
 
+  // 外枠
   ctx.beginPath();
-  ctx.arc(200, 150, 100, 0, 2 * Math.PI);
+  ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+  ctx.strokeStyle = "#666";
+  ctx.lineWidth = 2;
   ctx.stroke();
 
+  // 画像
   if (centerImage) {
-    const size = 100;
+    const size = radius * 1.2;
     const aspect = centerImage.width / centerImage.height;
-    let drawWidth = size, drawHeight = size;
-
-    if (aspect > 1) {
-      drawHeight = size / aspect;
-    } else {
-      drawWidth = size * aspect;
-    }
+    let w = size, h = size;
+    if (aspect > 1) h = size / aspect;
+    else w = size * aspect;
 
     ctx.save();
     ctx.beginPath();
-    ctx.arc(200, 150, size / 2, 0, 2 * Math.PI);
+    ctx.arc(cx, cy, size / 2, 0, 2 * Math.PI);
     ctx.clip();
-    ctx.drawImage(centerImage, 200 - drawWidth / 2, 150 - drawHeight / 2, drawWidth, drawHeight);
+    ctx.drawImage(centerImage, cx - w / 2, cy - h / 2, w, h);
     ctx.restore();
   }
+
+  // 数値（残り時間）
+  ctx.fillStyle = "#222";
+  ctx.font = `${Math.floor(width * 0.08)}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const min = String(Math.floor(remaining / 60)).padStart(2, "0");
+  const sec = String(remaining % 60).padStart(2, "0");
+  ctx.fillText(`${min}:${sec}`, cx, cy);
 }
 
-function playAlarmRepeated(times = 3, interval = 1000) {
+function playAlarm(times = 3) {
+  if (alarm.paused) alarm.load(); // 再生準備
   let count = 0;
-  const soundTimer = setInterval(() => {
+  const interval = setInterval(() => {
     alarm.currentTime = 0;
-    alarm.play();
+    alarm.play().catch(() => {});
     count++;
-    if (count >= times) clearInterval(soundTimer);
-  }, interval);
+    if (count >= times) clearInterval(interval);
+  }, 1500);
 }
 
 function startTimer() {
@@ -91,9 +115,10 @@ function startTimer() {
   if (isNaN(selectedMinutes) || selectedMinutes <= 0) return;
   totalTime = selectedMinutes * 60;
   elapsed = 0;
+  resizeCanvas();
   drawTimer();
-
   running = true;
+
   timer = setInterval(() => {
     if (elapsed < totalTime) {
       elapsed++;
@@ -101,7 +126,7 @@ function startTimer() {
     } else {
       clearInterval(timer);
       running = false;
-      playAlarmRepeated(3);
+      playAlarm(3);
     }
   }, 1000);
 }
@@ -117,5 +142,3 @@ function resetTimer() {
   elapsed = 0;
   drawTimer();
 }
-
-resetTimer();
