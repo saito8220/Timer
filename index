@@ -4,14 +4,32 @@
   <meta charset="UTF-8">
   <title>タイムタイマー（経過時間表示）</title>
   <style>
-    body { text-align: center; font-family: sans-serif; margin: 20px; }
-    canvas { background: #eee; border-radius: 50%; margin-top: 20px; }
-    button, select { font-size: 1.2em; margin: 10px; }
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      margin: 20px;
+    }
+    canvas {
+      background: #eee;
+      border-radius: 50%;
+      margin-top: 0px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    button, select {
+      font-size: 1.2em;
+      margin: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>経過時間タイマー</h1>
 
+  <!-- キャンバス（円グラフ） -->
+  <canvas id="timerCanvas" width="400" height="300"></canvas>
+
+  <!-- 時間設定・画像選択・ボタン類 -->
   <label>時間設定：
     <select id="timeSelect"></select>
   </label><br>
@@ -24,10 +42,10 @@
   <button onclick="pauseTimer()">⏸一時停止</button>
   <button onclick="resetTimer()">🔄リセット</button>
 
-  <br><canvas id="timerCanvas" width="400" height="400"></canvas>
-
+  <!-- アラーム音 -->
   <audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
+  <!-- スクリプト -->
   <script src="app.js"></script>
 </body>
 </html>
