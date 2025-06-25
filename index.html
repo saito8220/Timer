@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>タイムタイマー（経過時間表示）</title>
+  <title>残り時間タイマー</title>
   <style>
     body {
       text-align: center;
@@ -12,40 +12,36 @@
     canvas {
       background: #eee;
       border-radius: 50%;
-      margin-top: 0px;
       display: block;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 0 auto;
     }
     button, select {
-      font-size: 1.2em;
-      margin: 10px;
+      font-size: 1.1em;
+      margin: 8px;
     }
   </style>
 </head>
 <body>
-  <h1>経過時間タイマー</h1>
+  <h1>残り時間タイマー</h1>
+  <canvas id="timerCanvas"></canvas>
 
-  <!-- キャンバス（円グラフ） -->
-  <canvas id="timerCanvas" width="400" height="300"></canvas>
+  <div>
+    <label>時間設定：
+      <select id="timeSelect"></select> 分
+    </label><br>
 
-  <!-- 時間設定・画像選択・ボタン類 -->
-  <label>時間設定：
-    <select id="timeSelect"></select>
-  </label><br>
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="resetImage()">画像リセット</button><br>
 
-  <input type="file" id="imageInput" accept="image/*">
-  <button onclick="resetImage()">画像リセット</button>
-  <br>
+    <button onclick="startTimer()">▶開始</button>
+    <button onclick="pauseTimer()">⏸一時停止</button>
+    <button onclick="resetTimer()">🔄リセット</button>
+  </div>
 
-  <button onclick="startTimer()">▶開始</button>
-  <button onclick="pauseTimer()">⏸一時停止</button>
-  <button onclick="resetTimer()">🔄リセット</button>
+  <audio id="alarmSound"
+    src="https://soundeffect-lab.info/sound/anime/mp3/jingle03.mp3"
+    preload="auto"></audio>
 
-  <!-- アラーム音 -->
-  <audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
-
-  <!-- スクリプト -->
   <script src="app.js"></script>
 </body>
 </html>
