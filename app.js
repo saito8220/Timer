@@ -2,6 +2,8 @@ const canvas = document.getElementById("timerCanvas");
 const ctx = canvas.getContext("2d");
 const timeSelect = document.getElementById("timeSelect");
 const alarm = document.getElementById("alarmSound");
+
+// playAlarm関数内はそのままでOK
 const imageInput = document.getElementById("imageInput");
 
 let totalTime = 60;
