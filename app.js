@@ -14,7 +14,7 @@ let centerImage = null;
 function resizeCanvas() {
   const size = Math.min(window.innerWidth * 0.9, 400);
   canvas.width = size;
-  canvas.height = size;  // ← 縦も正方形にして円を完全表示
+  canvas.height = size;
   drawTimer();
 }
 window.addEventListener("resize", resizeCanvas);
@@ -98,21 +98,40 @@ function drawTimer() {
   ctx.fillText(`${min}:${sec}`, cx, cy);
 }
 
-function playAlarm(times = 3) {
-  if (alarm.paused) alarm.load(); // 再生準備
+async function playAlarm(times = 3) {
+  // モバイル対策：AudioContext を resume
+  try {
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+    await context.resume();
+  } catch (e) {
+    console.log("AudioContext resume failed:", e);
+  }
+
   let count = 0;
   const interval = setInterval(() => {
     alarm.currentTime = 0;
-    alarm.play().catch(() => {});
+    alarm.play().catch((e) => {
+      console.log("Playback failed:", e);
+    });
     count++;
     if (count >= times) clearInterval(interval);
   }, 1500);
 }
 
-function startTimer() {
+async function startTimer() {
   if (running) return;
+
+  // iOS対応：開始時に resume
+  try {
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+    await context.resume();
+  } catch (e) {
+    console.log("AudioContext resume failed on start:", e);
+  }
+
   const selectedMinutes = parseInt(timeSelect.value);
   if (isNaN(selectedMinutes) || selectedMinutes <= 0) return;
+
   totalTime = selectedMinutes * 60;
   elapsed = 0;
   resizeCanvas();
@@ -142,3 +161,4 @@ function resetTimer() {
   elapsed = 0;
   drawTimer();
 }
+
